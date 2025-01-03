@@ -5,6 +5,8 @@ from abc import abstractmethod, ABC
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
+from utils import params_loader
+
 
 
 class DataSplittingStrategy(ABC):
@@ -39,14 +41,23 @@ class DataSplitter:
 
 def main():
 
+    # load raw data from the csv file
     raw_data = pd.read_csv("data/raw/raw-data.csv")
 
-    data_splitter = DataSplitter(SimpleTrainTestSplitStrategy(), 0.2, 44)
+    # load the params for the params.yaml file
+    params = params_loader.params
+
+    data_splitter = DataSplitter(SimpleTrainTestSplitStrategy(), 
+                                    params['split_data']['test_size'], 
+                                    params['split_data']['random_state']
+                                    )
+    
     train_df, test_df = data_splitter.split(raw_data)
 
     # create output files and directories
-    train_df.to_csv("data/raw/train.csv", index=None)
-    test_df.to_csv("data/raw/test.csv", index=None)
+    os.makedirs("data/split")
+    train_df.to_csv("data/split/train.csv", index=None)
+    test_df.to_csv("data/split/test.csv", index=None)
 
 
 

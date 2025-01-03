@@ -1,0 +1,51 @@
+stages:
+  data_ingestion:
+    cmd: python3 ./src/ingest_data.py
+    deps: 
+      - src/ingest_data.py
+      - ./src/utils.py
+    outs:
+      - data/raw
+  split_data:
+    cmd: python3 ./src/split_data.py
+    deps: 
+      - data/raw
+      - ./src/split_data.py
+      - params.yaml
+      - ./src/utils.py
+    outs:
+      - data/split
+  preprocessing:
+    cmd: python3 ./src/data_preprocessing.py
+    deps:
+      - data/raw
+      - ./src/data_preprocessing.py
+      - ./src/utils.py
+    outs:
+      - data/processed
+  feature_engineering:
+    cmd: python3 ./src/feature_engineering.py
+    deps:
+      - data/processed
+      - ./src/feature_engineering.py
+      - params.yaml
+      - ./src/utils.py
+    outs:
+      - data/final
+  model_building:
+    cmd: python3 ./src/model_building.py
+    deps:
+      - data/final
+      - ./src/model_building.py
+      - params.yaml
+      - ./src/utils.py
+    outs:
+      - models/multinomialNB.pkl
+  model_evaluation:
+    cmd: python3 ./src/model_evaluation.py
+    deps:
+      - data/final
+      - models/multinomialNB.pkl
+      - ./src/model_evaluation.py
+    outs:
+      - metrics/evaluation_report.json

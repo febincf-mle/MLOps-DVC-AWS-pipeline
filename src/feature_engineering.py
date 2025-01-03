@@ -4,7 +4,7 @@ from abc import abstractmethod, ABC
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-from utils import get_logger_instance
+from utils import get_logger_instance, params_loader
 
 
 
@@ -54,10 +54,18 @@ class FeatureEngineer:
 
 def main():
 
+    # load csv files using pandas
     train_df = pd.read_csv("data/processed/processed_train_df.csv")
     test_df = pd.read_csv("data/processed/processed_test_df.csv")
 
-    feature_engineer = FeatureEngineer(TfIdfVectorizerStrategy(2500))
+    # load the parameters from the configuration file
+    params = params_loader.params
+
+    # create a feature engineer instance
+    feature_engineer = FeatureEngineer(
+        TfIdfVectorizerStrategy(max_features=params['feature_engineering']['max_features'])
+        )
+    
     vectorizer = feature_engineer.build_vectorizer(train_df)
 
     vectorized_train_df = vectorizer.vectorize(train_df)

@@ -1,4 +1,5 @@
 import os
+import yaml
 import logging
 
 from sklearn.metrics import accuracy_score, precision_score, recall_score
@@ -51,3 +52,44 @@ def classification_report(y, y_pred):
         'precision': precision,
         'recall': recall
     }
+
+
+class ParamsLoader:
+    """
+    A class to handle reading and managing configurations from a YAML file.
+    """
+    def __init__(self, filepath):
+        self.filepath = filepath
+        self.params = {}
+        self._load_params()
+
+    def _load_params(self):
+        """
+        Loads parameters from the YAML file into the `params` attribute.
+        Includes error handling for missing file, parsing errors, and invalid YAML structure.
+        """
+        try:
+            if not os.path.exists(self.filepath):
+                raise FileNotFoundError(f"The file '{self.filepath}' does not exist.")
+
+            with open(self.filepath, 'r') as file:
+                self.params = yaml.safe_load(file)
+
+                if not isinstance(self.params, dict):
+                    raise ValueError("The YAML file does not contain a valid dictionary structure.")
+
+        except FileNotFoundError as e:
+            print(f"Error: {e}")
+            raise
+        except yaml.YAMLError as e:
+            print(f"Error parsing YAML file: {e}")
+            raise
+        except ValueError as e:
+            print(f"Error: {e}")
+            raise
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            raise
+
+
+params_loader = ParamsLoader("params.yaml")

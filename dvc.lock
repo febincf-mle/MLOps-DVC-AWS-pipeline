@@ -1,0 +1,139 @@
+schema: '2.0'
+stages:
+  data_ingestion:
+    cmd: python3 ./src/ingest_data.py
+    deps:
+    - path: ./src/utils.py
+      hash: md5
+      md5: 0c6436833a330c33b49894413aeb6b9d
+      size: 2650
+    - path: src/ingest_data.py
+      hash: md5
+      md5: 4ed5f7903b9115de04c5e955ae8e97e3
+      size: 2392
+    outs:
+    - path: data/raw
+      hash: md5
+      md5: 79e1a309b6c43a9ea071418cf16477fa.dir
+      size: 46546364
+      nfiles: 1
+  split_data:
+    cmd: python3 ./src/split_data.py
+    deps:
+    - path: ./src/split_data.py
+      hash: md5
+      md5: eec51ce7b647dfcd5e31c74f7f82c9f7
+      size: 1921
+    - path: ./src/utils.py
+      hash: md5
+      md5: 0c6436833a330c33b49894413aeb6b9d
+      size: 2650
+    - path: data/raw
+      hash: md5
+      md5: 79e1a309b6c43a9ea071418cf16477fa.dir
+      size: 46546364
+      nfiles: 1
+    - path: params.yaml
+      hash: md5
+      md5: 621dc32cac447da65c0b13207fd5d79f
+      size: 136
+    outs:
+    - path: data/split
+      hash: md5
+      md5: 2c7f5fcd1cf72658f0f1c6adc9c941b5.dir
+      size: 46546377
+      nfiles: 2
+  preprocessing:
+    cmd: python3 ./src/data_preprocessing.py
+    deps:
+    - path: ./src/data_preprocessing.py
+      hash: md5
+      md5: 9faea311698c12a6b04e7b23cab5863a
+      size: 6144
+    - path: ./src/utils.py
+      hash: md5
+      md5: 0c6436833a330c33b49894413aeb6b9d
+      size: 2650
+    - path: data/raw
+      hash: md5
+      md5: 79e1a309b6c43a9ea071418cf16477fa.dir
+      size: 46546364
+      nfiles: 1
+    outs:
+    - path: data/processed
+      hash: md5
+      md5: 61c86c90d9f15e2226667fe8b3814c57.dir
+      size: 31896997
+      nfiles: 2
+  feature_engineering:
+    cmd: python3 ./src/feature_engineering.py
+    deps:
+    - path: ./src/feature_engineering.py
+      hash: md5
+      md5: 4bd0cfddea1e6c57c46bf45503ee0207
+      size: 2430
+    - path: ./src/utils.py
+      hash: md5
+      md5: 0c6436833a330c33b49894413aeb6b9d
+      size: 2650
+    - path: data/processed
+      hash: md5
+      md5: 61c86c90d9f15e2226667fe8b3814c57.dir
+      size: 31896997
+      nfiles: 2
+    - path: params.yaml
+      hash: md5
+      md5: 621dc32cac447da65c0b13207fd5d79f
+      size: 136
+    outs:
+    - path: data/final
+      hash: md5
+      md5: bc196c7809105d98a00161933f4a0347.dir
+      size: 1391355982
+      nfiles: 2
+  model_building:
+    cmd: python3 ./src/model_building.py
+    deps:
+    - path: ./src/model_building.py
+      hash: md5
+      md5: 69843077c4b0f93a5900c56092f830ad
+      size: 2117
+    - path: ./src/utils.py
+      hash: md5
+      md5: 0c6436833a330c33b49894413aeb6b9d
+      size: 2650
+    - path: data/final
+      hash: md5
+      md5: bc196c7809105d98a00161933f4a0347.dir
+      size: 1391355982
+      nfiles: 2
+    - path: params.yaml
+      hash: md5
+      md5: 621dc32cac447da65c0b13207fd5d79f
+      size: 136
+    outs:
+    - path: models/multinomialNB.pkl
+      hash: md5
+      md5: 2deb17b7e94b5882d1c4ed93b175631e
+      size: 389627
+  model_evaluation:
+    cmd: python3 ./src/model_evaluation.py
+    deps:
+    - path: ./src/model_evaluation.py
+      hash: md5
+      md5: 73616f56aa7ce067e180a89fa80ac107
+      size: 3129
+    - path: data/final
+      hash: md5
+      md5: bc196c7809105d98a00161933f4a0347.dir
+      size: 1391355982
+      nfiles: 2
+    - path: models/multinomialNB.pkl
+      hash: md5
+      md5: 2deb17b7e94b5882d1c4ed93b175631e
+      size: 389627
+    outs:
+    - path: metrics/evaluation_report.json
+      hash: md5
+      md5: 958c4ee4e20f18acf2b06cb761ba48c5
+      size: 224

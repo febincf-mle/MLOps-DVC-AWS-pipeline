@@ -163,15 +163,18 @@ class EmailPreProcessor(BaseEstimator, TransformerMixin):
 
 def main():
 
-    train_df = pd.read_csv("data/raw/train.csv")
-    test_df = pd.read_csv("data/raw/test.csv")
+    # load the train and test data
+    train_df = pd.read_csv("data/split/train.csv")
+    test_df = pd.read_csv("data/split/test.csv")
 
+    # create an instance of the EmailPreProcessor to preprocess the data
     preprocessor = EmailPreProcessor()
     preprocessor.fit(train_df)
 
     transformed_train_df = preprocessor.transform(train_df)
     transformed_test_df = preprocessor.transform(test_df)
 
+    # create the processed data directory
     os.makedirs("data/processed", exist_ok=True)
 
     # create output files
